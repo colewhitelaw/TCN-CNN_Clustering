@@ -146,36 +146,70 @@ def build_cnn_model(activation, input_shape):
     return model
   
 
-#path of stroke data
-stroke_filenames=glob.glob(r"C:\Users\white\OneDrive\Desktop\TCN-CNN_Clustering\post_stroke_data\ensemble\stroke")
-pd_stroke=pd.DataFrame()
+### --------------------------
+
+# path of stroke data 
+stroke_filenames = glob.glob(r"ADD FILE PATH HERE")
+pd_stroke = pd.DataFrame()
 for f in stroke_filenames:
     data = pd.read_csv(f)
-    data["ID"]=Path(f).resolve().stem
-    pd_stroke=pd.concat([pd_stroke,data],ignore_index=True)
-pd_stroke['label']='stroke'
+    data["ID"] = Path(f).stem
+    pd_stroke = pd.concat([pd_stroke, data], ignore_index=True)
+pd_stroke['label'] = 'stroke'
 
-#path of control data
-control_filenames=glob.glob(r"C:\Users\white\OneDrive\Desktop\TCN-CNN_Clustering\post_stroke_data\ensemble\control")
-pd_control=pd.DataFrame()
+# path of control data
+control_filenames = glob.glob(r"ADD FILE PATH HERE")
+pd_control = pd.DataFrame()
 for f in control_filenames:
     data = pd.read_csv(f)
-    data["ID"]=Path(f).resolve().stem
-    pd_control=pd.concat([pd_control,data],ignore_index=True)
-pd_control['label']='control'
+    data["ID"] = Path(f).stem
+    pd_control = pd.concat([pd_control, data], ignore_index=True)
+pd_control['label'] = 'control'
 
 # true label
-ID_stroke=pd_stroke["ID"].unique()
-ID_control=pd_control["ID"].unique()
-ID_stroke=pd.DataFrame(ID_stroke)
-ID_stroke["label"]="stroke"
-ID_control=pd.DataFrame(ID_control)
-ID_control["label"]="control"
-ID_with_labels=pd.concat([ID_stroke, ID_control], ignore_index=True, axis=0)
+ID_stroke = pd.DataFrame(pd_stroke["ID"].unique(), columns=['ID'])
+ID_stroke["label"] = "stroke"
+    
+ID_control = pd.DataFrame(pd_control["ID"].unique(), columns=['ID'])
+ID_control["label"] = "control"
+    
+# Combine stroke and control IDs
+ID_with_labels = pd.concat([ID_stroke, ID_control], ignore_index=True, axis=0)
 ID_with_labels.columns = ['ID', 'true_label']
 
 # all data
 df = pd.concat([pd_stroke, pd_control], axis=0)
+
+# Verify the data
+print("\nFinal combined data shape:", df.shape)
+print("\nUnique IDs in combined data:", df['ID'].nunique())
+print("\nLabel distribution:")
+print(df['label'].value_counts())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### -------------------------
+
+
 
 #TCN CNN function, input random seed number, true label and data, output inertia, rand index and clusters
 def TCN_CNN(ii,ID_with_labels,df):
@@ -361,7 +395,7 @@ def TCN_CNN(ii,ID_with_labels,df):
    
 start_time = time.time()
 warnings.filterwarnings("ignore", message="A worker stopped while some jobs were given to the executor.", category=UserWarning)
-n_run = 1 # number of iterations
+n_run = 10 # number of iterations
 result = Parallel(n_jobs=20)(delayed(TCN_CNN)(ii, ID_with_labels, df) for ii in range(1, n_run)) # to go faster (10000 iterations in about 14 hours)
 all_ts_cs,all_cluster5_ts_km,y,confusion_full_test = zip(*result)
 
