@@ -25,6 +25,8 @@ from tcn import TCN
 from joblib import Parallel, delayed
 from functools import reduce
 import matplotlib.pyplot as plt
+import plotnine
+import seaborn as sns
 from plotnine import (
     ggplot,
     aes,
@@ -38,8 +40,7 @@ from plotnine import (
     geom_path,
     scale_color_discrete
 )
-import plotnine
-import seaborn as sns
+
 plotnine.options.dpi = 1200
 warnings.filterwarnings('ignore')
 # no display of tf warning 
@@ -146,7 +147,7 @@ def build_cnn_model(activation, input_shape):
   
 
 #path of stroke data
-stroke_filenames=glob.glob(r"../code_10282023/post_stroke_data/ensemble/stroke/*.txt")
+stroke_filenames=glob.glob(r"C:\Users\white\OneDrive\Desktop\TCN-CNN_Clustering\post_stroke_data\ensemble\stroke")
 pd_stroke=pd.DataFrame()
 for f in stroke_filenames:
     data = pd.read_csv(f)
@@ -155,7 +156,7 @@ for f in stroke_filenames:
 pd_stroke['label']='stroke'
 
 #path of control data
-control_filenames=glob.glob(r"../code_10282023/post_stroke_data/ensemble/control/*.txt")
+control_filenames=glob.glob(r"C:\Users\white\OneDrive\Desktop\TCN-CNN_Clustering\post_stroke_data\ensemble\control")
 pd_control=pd.DataFrame()
 for f in control_filenames:
     data = pd.read_csv(f)
@@ -360,7 +361,7 @@ def TCN_CNN(ii,ID_with_labels,df):
    
 start_time = time.time()
 warnings.filterwarnings("ignore", message="A worker stopped while some jobs were given to the executor.", category=UserWarning)
-n_run = 10 # number of iterations
+n_run = 1 # number of iterations
 result = Parallel(n_jobs=20)(delayed(TCN_CNN)(ii, ID_with_labels, df) for ii in range(1, n_run)) # to go faster (10000 iterations in about 14 hours)
 all_ts_cs,all_cluster5_ts_km,y,confusion_full_test = zip(*result)
 
