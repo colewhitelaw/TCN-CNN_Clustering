@@ -6,7 +6,6 @@ tensorflow==2.14
 pywavelets==1.5.0
 tslearn==0.6.2
 joblib==1.2.0
-functools==1.6.4
 scikit-image==0.20.0
 scikit-learn==1.2.2
 plotnine==0.12.4
